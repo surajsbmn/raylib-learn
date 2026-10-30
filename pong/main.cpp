@@ -11,87 +11,10 @@ Color Yellow = Color{243, 213, 91, 255};
 int playerScore = 0;
 int cpuScore = 0;
 
-class Ball {
-  public:
-    float x, y;
-    int speedX, speedY;
-    int radius;
 
-    void Draw() { DrawCircle(x, y, radius, Yellow); }
 
-    void Update() {
-        x += speedX;
-        y += speedY;
 
-        if (y + radius >= GetScreenHeight() || y - radius <= 0) {
-            speedY *= -1;
-        }
-
-        if (x + radius >= GetScreenWidth()) {
-            cpuScore++;
-            Reset();
-        }
-
-        if (x - radius <= 0) {
-            playerScore++;
-            Reset();
-        }
-    }
-
-    void Reset() {
-        x = GetScreenWidth() / 2;
-        y = GetScreenHeight() / 2;
-
-        int speeds[2] = {1, -1};
-        speedX *= speeds[GetRandomValue(0, 1)];
-        speedY *= speeds[GetRandomValue(0, 1)];
-    }
-};
-
-class Paddle {
-  public:
-    float x, y;
-    float width, height;
-    int speed;
-
-    void Draw() { DrawRectangle(x, y, width, height, WHITE); }
-
-    void Update() {
-        if (IsKeyDown(KEY_UP)) {
-            y = y - speed;
-        }
-        if (IsKeyDown(KEY_DOWN)) {
-            y = y + speed;
-        }
-        LimitMovement();
-    }
-
-  protected:
-    void LimitMovement() {
-        if (y <= 0) {
-            y = 0;
-        }
-
-        if (y + height >= GetScreenHeight()) {
-            y = GetScreenHeight() - height;
-        }
-    }
-};
-
-class CpuPaddle : public Paddle {
-  public:
-    void Update(int ballY) {
-        if (y + height / 2 > ballY) {
-            y = y - speed;
-        }
-        if (y + height / 2 <= ballY) {
-            y = y + speed;
-        }
-        LimitMovement();
-    }
-};
-
-void runGame();
+void runGameLoop();
 
 Ball ball;
 Paddle player;
@@ -124,13 +47,13 @@ int main() {
     cpu.y = GetScreenHeight() / 2 - cpu.height / 2;
     cpu.speed = 6;
 
-    runGame();
+    runGameLoop();
 
     CloseWindow();
     return 0;
 }
 
-void runGame() {
+void runGameLoop() {
 
     while (WindowShouldClose() == false) {
         // Update
